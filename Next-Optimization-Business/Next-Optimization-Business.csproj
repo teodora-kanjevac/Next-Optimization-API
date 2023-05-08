@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Next_Optimization_Business</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+    <Folder Include="Mapper\" />
+    <Folder Include="Middleware\" />
+    <Folder Include="TokenGenerator\" />
+    <Folder Include="Services\" />
+    <Folder Include="Seeder\" />
+  </ItemGroup>
+
+</Project>
