@@ -11,9 +11,9 @@
 		<Folder Include="DTOs\" />
 		<Folder Include="Mapper\" />
 		<Folder Include="Middleware\" />
+		<Folder Include="Seeder\" />
 		<Folder Include="TokenGenerator\" />
 		<Folder Include="Services\" />
-		<Folder Include="Seeder\" />
 	</ItemGroup>
 
 	<ItemGroup>

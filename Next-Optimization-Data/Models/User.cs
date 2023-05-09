@@ -11,7 +11,7 @@ namespace NextOptimization.Data.Models
         public string PhoneNumber { get; set; }
         public string Country { get; set; }
         public List<Appointment>? AppointmentHistory { get; set; }
-        public List<Review> Reviews { get; set; }
+        public List<Review>? Reviews { get; set; }
         public bool IsDeleted { get; set; } = false;
     }
 }
