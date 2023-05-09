@@ -1,19 +1,29 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Next_Optimization_Business</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<RootNamespace>NextOptimization.Business</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Mapper\" />
-    <Folder Include="Middleware\" />
-    <Folder Include="TokenGenerator\" />
-    <Folder Include="Services\" />
-    <Folder Include="Seeder\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="DTOs\" />
+		<Folder Include="Mapper\" />
+		<Folder Include="Middleware\" />
+		<Folder Include="TokenGenerator\" />
+		<Folder Include="Services\" />
+		<Folder Include="Seeder\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="12.0.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Next-Optimization-Data\Next-Optimization-Data.csproj" />
+		<ProjectReference Include="..\Next-Optimization-Shared\Next-Optimization-Shared.csproj" />
+	</ItemGroup>
 
 </Project>
