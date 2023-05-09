@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NextOptimization.Data;
+using NextOptimization.Data.Models;
+using NextOptimization.Data.Repositories;
 using System.Text;
 
 namespace MeetingScheduler.API
@@ -65,22 +67,22 @@ namespace MeetingScheduler.API
             services.AddRouting(options => { options.LowercaseUrls = true; });
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            //services.AddIdentity<User, IdentityRole>(options =>
-            //{
-            //    options.Password.RequiredLength = 6;
-            //    options.Password.RequiredUniqueChars = 3;
-            //    options.Password.RequireUppercase = true;
-            //    options.Password.RequireNonAlphanumeric = false;
-            //    options.Password.RequireDigit = true;
-            //    options.SignIn.RequireConfirmedAccount = false;
-            //    options.SignIn.RequireConfirmedEmail = true;
-            //    options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
-            //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            //    options.Lockout.MaxFailedAccessAttempts = 5;
-            //    options.Lockout.AllowedForNewUsers = true;
-            //}).AddEntityFrameworkStores<NextOptimizationContext>()
-            //.AddDefaultTokenProviders()
-            //.AddTokenProvider<CustomEmailConfirmationTokenProvider<User>>("CustomEmailConfirmation");
+            services.AddIdentity<User, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 3;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = true;
+                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = true;
+                options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+            }).AddEntityFrameworkStores<NextOptimizationContext>()
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<CustomEmailConfirmationTokenProvider<User>>("CustomEmailConfirmation");
 
             services.AddDataProtection().PersistKeysToDbContext<NextOptimizationContext>();
 
@@ -108,11 +110,14 @@ namespace MeetingScheduler.API
 
             //services.AddScoped<ISeeder, Seeder>();
 
-            ////Repositories
-            //services.AddScoped<IUserRepository, UserRepository>();
-            //services.AddScoped<IRoleRepository, RoleRepository>();
+            //Repositories
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IPackageRepository, PackageRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
-            ////Services
+            //Services
             //services.AddScoped<IUserService, UserService>();
             //services.AddScoped<IRoleService, RoleService>();
             //services.AddScoped<IAuthenticationService, AuthenticationService>();
