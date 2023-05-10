@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NextOptimization.Business.Middleware;
+using NextOptimization.Business.Services;
+using NextOptimization.Business.TokenGenerator;
 using NextOptimization.Data;
 using NextOptimization.Data.Models;
 using NextOptimization.Data.Repositories;
@@ -118,10 +121,10 @@ namespace MeetingScheduler.API
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
             //Services
-            //services.AddScoped<IUserService, UserService>();
-            //services.AddScoped<IRoleService, RoleService>();
-            //services.AddScoped<IAuthenticationService, AuthenticationService>();
-            //services.AddScoped<ITokenGenerator, TokenGenerator>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
             //services.AddScoped<IEmailService, EmailService>();
         }
 
@@ -134,7 +137,7 @@ namespace MeetingScheduler.API
             app.UseAuthentication();
             app.UseAuthorization();
 
-            //app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -147,7 +150,6 @@ namespace MeetingScheduler.API
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Next Optimization API v1");
                     c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-
                 });
             }
         }
