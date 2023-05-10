@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NextOptimization.Business.Middleware;
 using NextOptimization.Business.Services;
+using NextOptimization.Business.Services.Implementation;
 using NextOptimization.Business.TokenGenerator;
 using NextOptimization.Data;
 using NextOptimization.Data.Models;
@@ -123,6 +124,9 @@ namespace MeetingScheduler.API
             //Services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IPackageService, PackageService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             //services.AddScoped<IEmailService, EmailService>();

@@ -10,8 +10,8 @@ namespace NextOptimization.Data.Repositories
         Task<List<Appointment>> GetAllCanceled();
         Task<List<Appointment>> GetAllCompleted();
         Task<List<Appointment>> GetAllPending();
-        Task<Appointment> GetByBuyer(string buyerId);
         Task<Appointment> GetById(string id);
         Task<Appointment> Update(Appointment appointment);
+        Task<List<Appointment>> GetAllByBuyer(string buyerId);
     }
 }
