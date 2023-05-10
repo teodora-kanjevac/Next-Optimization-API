@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NextOptimization.Business.Middleware;
+using NextOptimization.Business.Seeder;
 using NextOptimization.Business.Services;
 using NextOptimization.Business.Services.Implementation;
 using NextOptimization.Business.TokenGenerator;
@@ -112,7 +113,7 @@ namespace MeetingScheduler.API
 
             services.AddAuthorization();
 
-            //services.AddScoped<ISeeder, Seeder>();
+            services.AddScoped<ISeeder, Seeder>();
 
             //Repositories
             services.AddScoped<IUserRepository, UserRepository>();
