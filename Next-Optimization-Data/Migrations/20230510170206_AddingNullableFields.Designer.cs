@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NextOptimization.Data;
 
@@ -11,9 +12,10 @@ using NextOptimization.Data;
 namespace NextOptimization.Data.Migrations
 {
     [DbContext(typeof(NextOptimizationContext))]
-    partial class NextOptimizationContextModelSnapshot : ModelSnapshot
+    [Migration("20230510170206_AddingNullableFields")]
+    partial class AddingNullableFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
