@@ -21,6 +21,7 @@ namespace NextOptimization.Business.Services
         private readonly UserManager<User> _userManager;
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
@@ -31,7 +32,8 @@ namespace NextOptimization.Business.Services
             SignInManager<User> signInManager,
             IUserService userService,
             ITokenGenerator tokenGenerator,
-            IConfiguration configuration)
+            IConfiguration configuration, 
+            IEmailService emailService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -40,6 +42,7 @@ namespace NextOptimization.Business.Services
             _tokenGenerator = tokenGenerator;
             _signInManager = signInManager;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         public async Task<UserDTO> SignUp(UserRegisterDTO userDTO, string encodedUserIdAndToken)
@@ -106,14 +109,7 @@ namespace NextOptimization.Business.Services
             {
                 var token = await _tokenGenerator.GenerateEmailToken(user);
 
-                //bool sent = _emailService.SendMail(new List<string> { user.Email }, "Complete Registraion Process", token.ToString()).IsCompletedSuccessfully;
-
-                //if (!sent)
-                //{
-                //    ApiExceptionHandler.ThrowApiException(HttpStatusCode.BadRequest, "Token has expired. Fail resending mail.");
-                //}
-
-                ApiExceptionHandler.ThrowApiException(HttpStatusCode.BadRequest, "Token has expired. Email resent.");
+                _emailService.SendMail(new EmailDTO { Token = token, To = user.Email, Subject = "Register to Next Optimization" }, "RegistrationTemplate");
             }
 
             (bool addPasswordSuccess, string addPasswordError) = await AddPassword(user, decodedPassword);

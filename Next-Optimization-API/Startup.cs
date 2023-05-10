@@ -130,7 +130,7 @@ namespace MeetingScheduler.API
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
-            //services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEmailService, EmailService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
