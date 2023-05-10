@@ -38,9 +38,9 @@ namespace NextOptimization.Data.Repositories
             return await _nextOptimizationContext.Appointments.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<Appointment> GetByBuyer(string buyerId)
+        public async Task<List<Appointment>> GetAllByBuyer(string buyerId)
         {
-            return await _nextOptimizationContext.Appointments.FirstOrDefaultAsync(a => a.BuyerId == buyerId);
+            return await _nextOptimizationContext.Appointments.Where(a => a.BuyerId == buyerId).ToListAsync();
         }
 
         public async Task<Appointment> Create(Appointment appointment)

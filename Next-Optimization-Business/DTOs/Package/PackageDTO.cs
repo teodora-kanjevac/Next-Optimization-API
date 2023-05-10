@@ -1,6 +1,6 @@
-﻿namespace NextOptimization.Data.Models
+﻿namespace NextOptimization.Business.DTOs
 {
-    public class Package
+    public class PackageDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
