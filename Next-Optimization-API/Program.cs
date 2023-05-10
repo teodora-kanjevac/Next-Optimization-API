@@ -1,5 +1,6 @@
 using MeetingScheduler.API;
 using Microsoft.AspNetCore;
+using NextOptimization.Business.Seeder;
 using Serilog;
 
 public class Program
@@ -7,7 +8,7 @@ public class Program
     public static void Main(string[] args)
     {
         var host = CreateWebHost(args);
-        //RunSeeding(host);
+        RunSeeding(host);
         CreateHostBuilder(args).Build().Run();
     }
 
@@ -25,13 +26,13 @@ public class Program
               .UseStartup<Startup>()
               .Build();
 
-    //private static void RunSeeding(IWebHost host)
-    //{
-    //    var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
-    //    using (var scope = scopeFactory.CreateScope())
-    //    {
-    //        var seeder = scope.ServiceProvider.GetService<ISeeder>();
-    //        seeder.Seed().Wait();
-    //    }
-    //}
+    private static void RunSeeding(IWebHost host)
+    {
+        var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
+        using (var scope = scopeFactory.CreateScope())
+        {
+            var seeder = scope.ServiceProvider.GetService<ISeeder>();
+            seeder.Seed().Wait();
+        }
+    }
 }
