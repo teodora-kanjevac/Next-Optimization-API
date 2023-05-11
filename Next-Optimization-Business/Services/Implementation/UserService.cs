@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Newtonsoft.Json;
 using NextOptimization.Business.DTOs;
 using NextOptimization.Business.Middleware;
 using NextOptimization.Business.TokenGenerator;
@@ -6,6 +7,7 @@ using NextOptimization.Data.Models;
 using NextOptimization.Data.Repositories;
 using NextOptimization.Shared.Enums;
 using System.Net;
+using System.Text;
 using System.Transactions;
 
 namespace NextOptimization.Business.Services
@@ -74,6 +76,8 @@ namespace NextOptimization.Business.Services
                 await _userRepository.Create(user);
                 await _userRepository.AddToRole(user, Roles.User.ToString());
 
+                var token = EncodeUrl(await _tokenGenerator.GenerateEmailToken(user), user);
+
                 scope.Complete();
             }
 
@@ -119,6 +123,21 @@ namespace NextOptimization.Business.Services
             }
 
             return user;
+        }
+
+        public string EncodeUrl(string token, User user)
+        {
+            UserIdAndTokenForEmailDTO userIdAndToken = new()
+            {
+                UserId = user.Id,
+                Token = token
+            };
+
+            string text = JsonConvert.SerializeObject(userIdAndToken);
+            byte[] encodedBytes = Encoding.Unicode.GetBytes(text);
+            string encodedText = Convert.ToBase64String(encodedBytes);
+
+            return encodedText;
         }
     }
 }
