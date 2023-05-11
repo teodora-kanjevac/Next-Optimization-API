@@ -29,44 +29,44 @@ namespace NextOptimization.Business.Services.Implementation
         {
             var appointments = await _appointmentRepository.GetAll();
 
-            return _mapper.Map<List<AppointmentDTO>>(appointments);
+            return await MapAppointmentsWithBuyersAndPackages(appointments);
         }
 
         public async Task<List<AppointmentDTO>> GetAllPending()
         {
             var appointments = await _appointmentRepository.GetAllPending();
 
-            return _mapper.Map<List<AppointmentDTO>>(appointments);
+            return await MapAppointmentsWithBuyersAndPackages(appointments);
         }
 
         public async Task<List<AppointmentDTO>> GetAllCompleted()
         {
             var appointments = await _appointmentRepository.GetAllCompleted();
 
-            return _mapper.Map<List<AppointmentDTO>>(appointments);
+            return await MapAppointmentsWithBuyersAndPackages(appointments);
         }
 
         public async Task<List<AppointmentDTO>> GetAllCanceled()
         {
             var appointments = await _appointmentRepository.GetAllCanceled();
 
-            return _mapper.Map<List<AppointmentDTO>>(appointments);
+            return await MapAppointmentsWithBuyersAndPackages(appointments);
         }
 
         public async Task<List<AppointmentDTO>> GetAllByBuyer(string buyerId)
         {
             var appointments = await _appointmentRepository.GetAllByBuyer(buyerId);
 
-            return _mapper.Map<List<AppointmentDTO>>(appointments);
+            return await MapAppointmentsWithBuyersAndPackages(appointments);
         }
 
         public async Task<AppointmentDTO> GetById(string id)
         {
             Appointment appointment = await _appointmentRepository.GetById(id);
 
-            ApiExceptionHandler.ObjectNotNull(appointment, $"Appointment with {id}");
+            ApiExceptionHandler.ObjectNotNull(appointment, $"Appointment with id '{id}'");
 
-            return _mapper.Map<AppointmentDTO>(appointment);
+            return await MapAppointmentWithBuyerAndPackage(appointment);
         }
 
         public async Task<AppointmentDTO> Create(AppointmentCreateDTO appointmentCreateDTO, string username)
@@ -75,15 +75,19 @@ namespace NextOptimization.Business.Services.Implementation
 
             Appointment appointment = _mapper.Map<Appointment>(appointmentCreateDTO);
 
+            Package package = await _packageRepository.GetById(appointmentCreateDTO.PackageId);
+
+            ApiExceptionHandler.ObjectNotNull(package, $"Package with id '{appointmentCreateDTO.PackageId}'");
+
             appointment.BuyerId = userDTO.Id;
             appointment.Status = Status.Pending.ToString();
             appointment.PurchaseDate = DateTime.Now;
             appointment.EndDate = appointment.StartDate.AddHours(2);
-            appointment.Package = await _packageRepository.GetById(appointmentCreateDTO.PackageId);
+            appointment.Package = package;
 
             await _appointmentRepository.Create(appointment);
 
-            return _mapper.Map<AppointmentDTO>(appointment);
+            return await MapAppointmentWithBuyerAndPackage(appointment);
         }
 
         public async Task<AppointmentDTO> Update(AppointmentUpdateDTO appointmentUpdateDTO, string id, string username)
@@ -106,7 +110,7 @@ namespace NextOptimization.Business.Services.Implementation
 
             await _appointmentRepository.Update(appointment);
 
-            return _mapper.Map<AppointmentDTO>(appointment);
+            return await MapAppointmentWithBuyerAndPackage(appointment);
         }
 
         public async Task<bool> Delete(string id)
@@ -116,6 +120,31 @@ namespace NextOptimization.Business.Services.Implementation
             ApiExceptionHandler.ObjectNotNull(appointment, $"Appointment with {id}");
 
             return await _appointmentRepository.Delete(appointment);
+        }
+
+        private async Task<AppointmentDTO> MapAppointmentWithBuyerAndPackage(Appointment appointment)
+        {
+            AppointmentDTO appointmentDTO = _mapper.Map<AppointmentDTO>(appointment);
+
+            User buyer = await _userRepository.GetById(appointment.BuyerId);
+            appointmentDTO.Buyer = _mapper.Map<UserDTO>(buyer);
+
+            Package package = await _packageRepository.GetById(appointment.PackageId);
+            appointmentDTO.Package = _mapper.Map<PackageDTO>(package);
+
+            return appointmentDTO;
+        }
+
+        private async Task<List<AppointmentDTO>> MapAppointmentsWithBuyersAndPackages(List<Appointment> appointments)
+        {
+            List<AppointmentDTO> appointmentDTO = new();
+
+            foreach (var appointment in appointments)
+            {
+                appointmentDTO.Add(await MapAppointmentWithBuyerAndPackage(appointment));
+            }
+
+            return appointmentDTO;
         }
     }
 }

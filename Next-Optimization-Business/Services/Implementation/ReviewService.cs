@@ -29,16 +29,16 @@ namespace NextOptimization.Business.Services
         {
             var reviews = await _reviewRepository.GetAll();
 
-            return _mapper.Map<List<ReviewDTO>>(reviews);
+            return await MapReviewsWithUsers(reviews);
         }
 
         public async Task<ReviewDTO> GetById(string id)
         {
             var review = await _reviewRepository.GetById(id);
 
-            ApiExceptionHandler.ObjectNotNull(review, $"Review with {id}");
+            ApiExceptionHandler.ObjectNotNull(review, $"Review with id '{id}'");
 
-            return _mapper.Map<ReviewDTO>(review);
+            return await MapReviewWithUser(review);
         }
 
         public async Task<List<ReviewDTO>> GetAllByReviewer(string reviewerId)
@@ -49,25 +49,27 @@ namespace NextOptimization.Business.Services
 
             var reviews = await _reviewRepository.GetAllByReviewer(reviewerId);
 
-            return _mapper.Map<List<ReviewDTO>>(reviews);
+            return await MapReviewsWithUsers(reviews);
         }
 
         public async Task<ReviewDTO> Create(ReviewCreateDTO reviewCreateDTO, string username)
         {
             UserDTO userDTO = await _userService.GetByUsername(username);
 
-            if (await _appointmentRepository.GetAllByBuyer(userDTO.Id) == null)
+            var appointments = await _appointmentRepository.GetAllByBuyer(userDTO.Id);
+
+            if (appointments.Count == 0)
             {
                 ApiExceptionHandler.ThrowApiException(HttpStatusCode.BadRequest, "You can't leave a review if you haven't purchased the service.");
             }
 
-            ReviewDTO reviewDTO = _mapper.Map<ReviewDTO>(reviewCreateDTO);
+            Review review = _mapper.Map<Review>(reviewCreateDTO);
 
-            reviewDTO.Reviewer = userDTO;
+            review.ReviewerId = userDTO.Id;
 
-            await _reviewRepository.Create(_mapper.Map<Review>(reviewDTO));
+            await _reviewRepository.Create(review);
 
-            return reviewDTO;
+            return await MapReviewWithUser(review);
         }
 
         public async Task<ReviewDTO> Update(string id, ReviewUpdateDTO reviewUpdateDTO, string username)
@@ -76,7 +78,7 @@ namespace NextOptimization.Business.Services
 
             Review review = await _reviewRepository.GetById(id);
 
-            ApiExceptionHandler.ObjectNotNull(review, $"Review with {id}");
+            ApiExceptionHandler.ObjectNotNull(review, $"Review with id '{id}'");
 
             if (userDTO.Id != review.ReviewerId)
             {
@@ -87,16 +89,38 @@ namespace NextOptimization.Business.Services
 
             await _reviewRepository.Update(review);
 
-            return _mapper.Map<ReviewDTO>(review);
+            return await MapReviewWithUser(review);
         }
 
         public async Task<bool> Delete(string reviewId)
         {
             Review review = await _reviewRepository.GetById(reviewId);
 
-            ApiExceptionHandler.ObjectNotNull(review, $"Review with {reviewId}");
+            ApiExceptionHandler.ObjectNotNull(review, $"Review with id '{reviewId}'");
 
             return await _reviewRepository.Delete(review);
+        }
+
+        private async Task<ReviewDTO> MapReviewWithUser(Review review)
+        {
+            ReviewDTO reviewDTO = _mapper.Map<ReviewDTO>(review);
+
+            User user = await _userRepository.GetById(review.ReviewerId);
+            reviewDTO.Reviewer = _mapper.Map<UserDTO>(user);
+
+            return reviewDTO;
+        }
+
+        private async Task<List<ReviewDTO>> MapReviewsWithUsers(List<Review> reviews)
+        {
+            List<ReviewDTO> reviewsDTO = new();
+
+            foreach (var review in reviews)
+            {
+                reviewsDTO.Add(await MapReviewWithUser(review));
+            }
+
+            return reviewsDTO;
         }
     }
 }
