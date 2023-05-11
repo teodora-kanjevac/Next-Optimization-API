@@ -128,9 +128,26 @@ namespace NextOptimization.Business.Services
 
             var token = await _tokenGenerator.GeneratePasswordResetToken(user);
 
+            var token2 = EncodeUrl(token, user);
+
             //await _emailService.SendMail(new List<string> { user.Email }, "Resetovanje šifre", _emailService.EncodeUrl(token, user));
 
             return true;
+        }
+
+        public string EncodeUrl(string token, User user)
+        {
+            UserIdAndTokenForEmailDTO userIdAndToken = new()
+            {
+                UserId = user.Id,
+                Token = token
+            };
+
+            string text = JsonConvert.SerializeObject(userIdAndToken);
+            byte[] encodedBytes = Encoding.Unicode.GetBytes(text);
+            string encodedText = Convert.ToBase64String(encodedBytes);
+
+            return encodedText;
         }
 
         public async Task<bool> ResetPassword(UserResetPasswordDTO userDTO, string encodedUserIdAndToken)
@@ -163,7 +180,7 @@ namespace NextOptimization.Business.Services
             return await ResetPassword(user, userIdAndTokenDTO.Token, decodedPassword);
         }
 
-        public async Task<bool> ChangePassword(UserChangePasswordDTO userDTO)
+        public async Task<bool> ChangePassword(string id, UserChangePasswordDTO userDTO)
         {
             if (userDTO.CurrentPassword.Equals(userDTO.NewPassword))
             {
@@ -173,8 +190,8 @@ namespace NextOptimization.Business.Services
             string decodedCurrentPassword = Encoding.UTF8.GetString(Convert.FromBase64String(userDTO.CurrentPassword));
             string decodedNewPassword = Encoding.UTF8.GetString(Convert.FromBase64String(userDTO.NewPassword));
 
-            User user = await _userRepository.GetById(userDTO.Id);
-            ApiExceptionHandler.ObjectNotNull(user, $"User with id {userDTO.Id}");
+            User user = await _userRepository.GetById(id);
+            ApiExceptionHandler.ObjectNotNull(user, $"User with id {id}");
 
             Regex regex = new(@"^(?=.*[A-Z])(?=.*[0-9])[A-Za-z0-9!@#$%^&*]{6,}$");
 
@@ -206,11 +223,6 @@ namespace NextOptimization.Business.Services
             string decodedPassword = Encoding.UTF8.GetString(bytePassword);
 
             user = await SignInWithPassword(user, decodedPassword);
-
-            if (user == null)
-            {
-                ApiExceptionHandler.ThrowApiException(HttpStatusCode.BadRequest, "Email or password is incorrect.");
-            }
 
             JWTCreateDTO userToken = new();
             _mapper.Map(user, userToken);
@@ -270,13 +282,17 @@ namespace NextOptimization.Business.Services
             {
                 var login = await _signInManager.PasswordSignInAsync(user.Email, password, isPersistent: false, lockoutOnFailure: false);
 
-                if (login.Succeeded)
+                if (!login.Succeeded)
                 {
-                    return user;
+                    ApiExceptionHandler.ThrowApiException(HttpStatusCode.BadRequest, "Email or password is incorrect.");
                 }
+
+                return user;
             }
 
-            return user;
+            ApiExceptionHandler.ThrowApiException(HttpStatusCode.BadRequest, $"User with email {user.Email} is not registered.");
+
+            return null;
         }
     }
 }

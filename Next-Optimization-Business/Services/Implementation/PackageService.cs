@@ -28,7 +28,7 @@ namespace NextOptimization.Business.Services
         {
             Package package = await _packageRepository.GetById(id);
 
-            ApiExceptionHandler.ObjectNotNull(package, $"Package with {id}");
+            ApiExceptionHandler.ObjectNotNull(package, $"Package with id '{id}'");
 
             return _mapper.Map<PackageDTO>(package);
         }
@@ -37,7 +37,7 @@ namespace NextOptimization.Business.Services
         {
             Package package = await _packageRepository.GetByName(name);
 
-            ApiExceptionHandler.ObjectNotNull(package, $"Package with {name}");
+            ApiExceptionHandler.ObjectNotNull(package, $"Package with name '{name}'");
 
             return _mapper.Map<PackageDTO>(package);
         }
@@ -55,7 +55,7 @@ namespace NextOptimization.Business.Services
         {
             Package package = await _packageRepository.GetById(id);
 
-            ApiExceptionHandler.ObjectNotNull(package, $"Package with {id}");
+            ApiExceptionHandler.ObjectNotNull(package, $"Package with id '{id}'");
 
             package = _mapper.Map(packageUpdateDTO, package);
 
@@ -68,7 +68,7 @@ namespace NextOptimization.Business.Services
         {
             Package package = await _packageRepository.GetById(id);
 
-            ApiExceptionHandler.ObjectNotNull(package, $"Package with {id}");
+            ApiExceptionHandler.ObjectNotNull(package, $"Package with id '{id}'");
 
             return await _packageRepository.Delete(package);
         }

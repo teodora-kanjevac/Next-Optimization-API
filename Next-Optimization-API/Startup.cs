@@ -36,6 +36,7 @@ namespace MeetingScheduler.API
             services.AddDbContext<NextOptimizationContext>(options =>
             {
                 options.UseSqlServer(_configuration.GetSection("ConnectionStrings:DefaultConnection").Value);
+                options.EnableSensitiveDataLogging();
             });
 
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development"))

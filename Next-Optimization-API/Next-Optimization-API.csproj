@@ -24,10 +24,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Controllers\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\Next-Optimization-Business\Next-Optimization-Business.csproj" />
 		<ProjectReference Include="..\Next-Optimization-Data\Next-Optimization-Data.csproj" />
 		<ProjectReference Include="..\Next-Optimization-Shared\Next-Optimization-Shared.csproj" />
